@@ -4,29 +4,23 @@ import os
 from PIL import Image
 from tqdm import tqdm
 
-# ==== CONFIG ====
-csv_path = "sign_mnist_train.csv"  # your CSV file path
-output_dir = "asl_images"          # folder where images will be saved
-max_per_label = 100                # limit 100 per label
-img_size = 28                      # each image is 28x28 pixels
+csv_path = "sign_mnist_train.csv"  
+output_dir = "asl_images"          
+max_per_label = 100                
+img_size = 28                      
 
-# ==== LOAD DATA ====
 data = pd.read_csv(csv_path)
 
-# ==== CREATE OUTPUT FOLDERS ====
 os.makedirs(output_dir, exist_ok=True)
 for label in range(26):  # 0–25 for A–Y
     os.makedirs(os.path.join(output_dir, chr(label + 65)), exist_ok=True)
 
-# ==== GENERATE IMAGES ====
-# Keep track of how many per label
 count = {label: 0 for label in range(26)}
 
 for i in tqdm(range(len(data)), desc="Converting CSV to images"):
     row = data.iloc[i]
     label = int(row['label'])
     
-    # Skip if label is 9 (J) or 25 (Z)
     if label in [9, 25]:
         continue
     
@@ -36,8 +30,7 @@ for i in tqdm(range(len(data)), desc="Converting CSV to images"):
     pixels = row.drop('label').to_numpy().reshape(img_size, img_size).astype(np.uint8)
     img = Image.fromarray(pixels)
     
-    # Save image under folder named by letter
-    letter = chr(label + 65)  # A=65 in ASCII
+    letter = chr(label + 65)  
     img_path = os.path.join(output_dir, letter, f"{letter}_{count[label]+1}.png")
     img.save(img_path)
     
