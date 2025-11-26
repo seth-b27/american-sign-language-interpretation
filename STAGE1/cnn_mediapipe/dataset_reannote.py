@@ -48,11 +48,6 @@ hands = mp_hands.Hands(
 print("🐥 MEDIAPIPE INITIALIZED !")
 
 def get_bbox_from_landmarks(landmarks, img_width, img_height, padding_percent=0.15):
-    """
-    returns:
-        bbox: (x_min, y_min, x_max, y_max) in pixel coordinates
-        normalized_bbox: (x_center, y_center, width, height) in [0, 1]
-    """
     # extract all landmark coordinates (that is already normalized to [0,1])
     x_coords = [lm.x for lm in landmarks.landmark]
     y_coords = [lm.y for lm in landmarks.landmark]
@@ -98,11 +93,6 @@ def get_bbox_from_landmarks(landmarks, img_width, img_height, padding_percent=0.
 
 
 def extract_and_crop_hand(image, landmarks):
-    """
-    returns:
-        cropped_hand: cropped hand region (or None if failed)
-        bbox: bounding box coordinates
-    """
     h, w, _ = image.shape
     
     # get bounding box from landmarks
@@ -122,15 +112,11 @@ def extract_and_crop_hand(image, landmarks):
     
     return hand_crop, bbox_px
 
-
+"""
+b. each image processed by: detect hand, extract region, resize
+a. use_fallback: If True, use original image when MediaPipe fails
+"""
 def process_image(image_path, use_fallback=True):
-    """
-    - each image processed by: detect hand, extract region, resize
-    - use_fallback: If True, use original image when MediaPipe fails
-    - returns:
-        processed_image: processed hand image (64x64) or None if failed
-        status: success status message
-    """
     # read image
     image = cv2.imread(image_path)
     if image is None:
@@ -205,9 +191,7 @@ successful_images = 0
 mediapipe_success = 0
 fallback_used = 0
 failed_images = 0
-failed_details = {
-    'read_failed': 0
-}
+failed_details = {'read_failed': 0}
 
 # process each class folder
 for class_idx, class_name in enumerate(CLASS_NAMES):
@@ -254,23 +238,22 @@ for class_idx, class_name in enumerate(CLASS_NAMES):
             class_failed += 1
             failed_details['read_failed'] += 1
     
-    print(f"  ✓ Success: {class_success}/{len(image_files)} ({class_success/len(image_files)*100:.1f}%)")
+    print(f"  ✅ Success: {class_success}/{len(image_files)} ({class_success/len(image_files)*100:.1f}%)")
     if class_failed > 0:
-        print(f"  ✗ Failed: {class_failed} images")
+        print(f"  ❌ Failed: {class_failed} images")
 
 
 print("COMPLETE PROCESSING\n📊 Summary Statistics:")
-print(f"  Total images processed: {total_images}")
-print(f"  ✓ Successful: {successful_images} ({successful_images/total_images*100:.1f}%)")
-print(f"    - MediaPipe extracted: {mediapipe_success} ({mediapipe_success/total_images*100:.1f}%)")
-print(f"    - Fallback used: {fallback_used} ({fallback_used/total_images*100:.1f}%)")
-print(f"  ✗ Failed: {failed_images} ({failed_images/total_images*100:.1f}%)")
+print(f"Total images processed: {total_images}")
+print(f"a. Successful: {successful_images} ({successful_images/total_images*100:.1f}%)")
+print(f"    1. MediaPipe extracted: {mediapipe_success} ({mediapipe_success/total_images*100:.1f}%)")
+print(f"    2. Fallback used: {fallback_used} ({fallback_used/total_images*100:.1f}%)")
+print(f"b. Failed: {failed_images} ({failed_images/total_images*100:.1f}%)")
 
 if failed_images > 0:
-    print(f"\n  Failure breakdown:")
-    print(f"    - Read failed: {failed_details['read_failed']}")
+    print(f"c. Read failed: {failed_details['read_failed']}")
 
-print(f"\n✓ New annotated dataset saved to: {NEW_DATASET_PATH}")
+print(f"\n🐥 New annotated dataset saved to: {NEW_DATASET_PATH}")
 
 # cleanup
 hands.close()
