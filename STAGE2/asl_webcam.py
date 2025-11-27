@@ -211,9 +211,9 @@ def draw_info_panel(frame, fps, hand_detected):
                 FONT_THICKNESS_THIN, cv2.LINE_AA)
     
     # controls
-    cv2.putText(frame, "Q: Quit", (w - 220, 25), FONT,  0.4, 
+    cv2.putText(frame, "Q: Quit", (w - 110, 25), FONT,  0.4, 
                 COLOR_INFO_TEXT, FONT_THICKNESS_THIN, cv2.LINE_AA)
-    cv2.putText(frame, "SPACE: Pause", (w - 220, 50), FONT, 0.4, 
+    cv2.putText(frame, "SPACE: Pause", (w - 110, 50), FONT, 0.4, 
                 COLOR_INFO_TEXT, FONT_THICKNESS_THIN, cv2.LINE_AA)
 
 # M A I N   L O O P
@@ -251,7 +251,7 @@ def main():
             print("❌ Error: Could not read frame!")
             break
         
-        # flip immediately for mirrror view/effect
+        # flip immediately for mirrror view/effect + convert
         frame = cv2.flip(frame, 1)
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         
@@ -340,8 +340,8 @@ def main():
             cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), bbox_color, BBOX_THICKNESS)
             
             if current_prediction:
-                draw_prediction_on_bbox( frame, current_bbox, current_prediction,
-                                        current_confidence, is_stable )
+                draw_prediction_on_bbox( frame, current_bbox, current_prediction, current_confidence, 
+                                        is_stable )
         
         # info panel
         draw_info_panel(frame, fps, hand_detected)
@@ -371,7 +371,7 @@ def main():
     hands.close()
     
     print(f"🐥 Total frames: {frame_count}")
-    print("\n📕 S H U T T I N G   D O W N . . . \n📕 S T A G E   2   E N D E D ! 📕")
+    print("\n🐔 S H U T T I N G   D O W N . . . \n📕 S T A G E   2   E N D E D ! 📕")
 
 if __name__ == "__main__":
     try:
