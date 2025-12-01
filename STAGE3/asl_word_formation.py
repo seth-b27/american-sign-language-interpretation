@@ -23,8 +23,9 @@ CAMERA_HEIGHT = 480
 CAMERA_FPS = 30
 
 # mediapipe config
-MIN_DETECTION_CONFIDENCE = 0.4  
-MIN_TRACKING_CONFIDENCE = 0.4   
+MIN_DETECTION_CONFIDENCE = 0.4 # mp will ignore hands detected with confidence below this 
+MIN_TRACKING_CONFIDENCE = 0.4 
+#mp uses temporal info (landmarks from previous frames) and is faster. but if confidence drops below this, it will run detection again.
 BBOX_PADDING = 0.15  
 
 # pediction stability config

@@ -137,7 +137,7 @@ def preprocess_hand_crop(hand_crop):
         return None
 
 
-def get_stable_prediction(prediction_history):
+def get_stable_prediction(prediction_history): # voting system
 
     if len(prediction_history) == 0:
         return None, 0.0, False
@@ -264,7 +264,7 @@ def main():
         
         if not paused:
             # STEP 1: MediaPipe detection 
-            results = hands.process(frame_rgb)
+            results = hands.process(frame_rgb) # starts mp preprocessing here
             
             if results.multi_hand_landmarks:
                 hand_detected = True
@@ -340,8 +340,7 @@ def main():
             cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), bbox_color, BBOX_THICKNESS)
             
             if current_prediction:
-                draw_prediction_on_bbox( frame, current_bbox, current_prediction, current_confidence, 
-                                        is_stable )
+                draw_prediction_on_bbox( frame, current_bbox, current_prediction, current_confidence, is_stable )
         
         # info panel
         draw_info_panel(frame, fps, hand_detected)

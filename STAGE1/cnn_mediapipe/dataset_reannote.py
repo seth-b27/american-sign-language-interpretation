@@ -13,6 +13,7 @@ import mediapipe as mp
 import os
 from tqdm import tqdm
 import shutil
+import math
 
 print("ASL DATASET RE-ANNOTATION WITH MEDIAPIPE")
 
@@ -68,16 +69,20 @@ def get_bbox_from_landmarks(landmarks, img_width, img_height, padding_percent=0.
     y_max_norm = min(1, y_max_norm + height_norm * padding_percent)
     
     # converting to pixel coordinates
-    x_min_px = int(x_min_norm * img_width)
-    x_max_px = int(x_max_norm * img_width)
-    y_min_px = int(y_min_norm * img_height)
-    y_max_px = int(y_max_norm * img_height)
+    x_min_px = math.floor(x_min_norm * img_width)
+    x_max_px = math.ceil(x_max_norm * img_width)
+    y_min_px = math.floor(y_min_norm * img_height)
+    y_max_px = math.ceil(y_max_norm * img_height)
     
     # ensure valid bbox
     x_min_px = max(0, x_min_px)
     x_max_px = min(img_width, x_max_px)
     y_min_px = max(0, y_min_px)
     y_max_px = min(img_height, y_max_px)
+    
+    # validate bbox
+    if x_max_px <= x_min_px or y_max_px <= y_min_px:
+        raise ValueError("⚠️ Invalid bounding box: zero or negative area")
     
     bbox_pixels = (x_min_px, y_min_px, x_max_px, y_max_px)
     
